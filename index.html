@@ -1,206 +1,536 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-	<title>Neon Casino</title>
-	<link rel="stylesheet" href="style.css" />
+
+	<meta
+		name="viewport"
+		content="
+			width=device-width,
+			initial-scale=1,
+			maximum-scale=1,
+			user-scalable=no,
+			viewport-fit=cover
+		"
+	/>
+
+	<title>Night Casino</title>
+
+	<link
+		rel="stylesheet"
+		href="style.css"
+	/>
+
 </head>
+
 <body>
-	<main class="app">
-		<section id="homeView" class="view active">
+
+	<div class="app">
+
+		<!-- HOME -->
+
+		<section
+			id="homeView"
+			class="view active"
+		>
+
 			<div class="topbar">
+
 				<div>
-					<p class="eyebrow">Casino</p>
-					<h1>Neon Casino</h1>
+
+					<p class="eyebrow">
+						Casino Mobile
+					</p>
+
+					<h1>
+						Night Casino
+					</h1>
+
 				</div>
+
 				<div class="balance-pill">
-					<span class="balance-label">Monedas</span>
-					<strong id="homeCoins">1,000</strong>
+
+					<span class="balance-label">
+						Saldo
+					</span>
+
+					<strong id="balanceText">
+						$1000
+					</strong>
+
 				</div>
+
 			</div>
 
 			<div class="hero-card">
-				<p class="hero-kicker">Elegí un modo y jugá rápido</p>
-				<h2>Minimalista, oscuro y táctil</h2>
-				<p class="hero-copy">Slot, jackpot y blackjack en una sola app, con estética mobile y animaciones suaves.</p>
+
+				<span class="hero-kicker">
+					Experiencia estilo app
+				</span>
+
+				<h2>
+					Juegos rápidos,
+					animaciones suaves
+					y estética premium.
+				</h2>
+
+				<p class="hero-copy">
+					Girá slots, jugá blackjack
+					y probá suerte en el jackpot.
+				</p>
 
 				<div class="hero-stats">
+
 					<div class="mini-stat">
 						<span>3</span>
-						<p>juegos</p>
+						<p>Juegos</p>
 					</div>
-					<div class="mini-stat">
-						<span id="homeSelectedBet">10</span>
-						<p>apuesta</p>
-					</div>
+
 					<div class="mini-stat">
 						<span>∞</span>
-						<p>modo</p>
+						<p>Partidas</p>
 					</div>
+
+					<div class="mini-stat">
+						<span>⚡</span>
+						<p>Rápido</p>
+					</div>
+
 				</div>
+
 			</div>
 
 			<div class="menu-grid">
-				<button class="game-card" data-view="slotView">
-					<div class="game-icon">🎰</div>
-					<div>
-						<h3>Slot Machine</h3>
-						<p>Girá los carretes y buscá combinaciones.</p>
+
+				<button
+					id="openSlotBtn"
+					class="game-card"
+				>
+
+					<div class="game-icon">
+						🎰
 					</div>
+
+					<div>
+
+						<h3>
+							Slot Machine
+						</h3>
+
+						<p>
+							Combiná símbolos y
+							multiplicá apuestas.
+						</p>
+
+					</div>
+
 				</button>
 
-				<button class="game-card" data-view="jackpotView">
-					<div class="game-icon">💰</div>
-					<div>
-						<h3>Jackpot</h3>
-						<p>9 espacios, un premio grande y premios menores.</p>
+				<button
+					id="openJackpotBtn"
+					class="game-card"
+				>
+
+					<div class="game-icon">
+						💎
 					</div>
+
+					<div>
+
+						<h3>
+							Jackpot
+						</h3>
+
+						<p>
+							9 espacios.
+							1 premio enorme.
+						</p>
+
+					</div>
+
 				</button>
 
-				<button class="game-card" data-view="blackjackView">
-					<div class="game-icon">🂡</div>
-					<div>
-						<h3>Blackjack</h3>
-						<p>Pedí, plantate y tratá de llegar a 21.</p>
+				<button
+					id="openBlackjackBtn"
+					class="game-card"
+				>
+
+					<div class="game-icon">
+						🃏
 					</div>
+
+					<div>
+
+						<h3>
+							Blackjack
+						</h3>
+
+						<p>
+							Llegá a 21 sin pasarte.
+						</p>
+
+					</div>
+
 				</button>
+
 			</div>
 
 			<div class="home-footer">
-				<p>Moneda virtual solamente. Sin dinero real.</p>
+				Night Casino • PWA Edition
 			</div>
+
 		</section>
 
-		<section id="slotView" class="view">
+		<!-- SLOT -->
+
+		<section
+			id="slotView"
+			class="view"
+		>
+
 			<div class="screen-header">
-				<button class="back-btn" data-back>←</button>
-				<div>
-					<p class="eyebrow">Juego</p>
-					<h2>Slot Machine</h2>
+
+				<button
+					class="back-btn"
+					data-back
+				>
+					←
+				</button>
+
+				<h2>
+					Slot Machine
+				</h2>
+
+				<div
+					class="balance-pill compact"
+				>
+
+					<span class="balance-label">
+						Saldo
+					</span>
+
+					<strong class="balanceMirror">
+						$1000
+					</strong>
+
 				</div>
-				<div class="balance-pill compact">
-					<strong id="slotCoins">1,000</strong>
-				</div>
+
 			</div>
 
 			<div class="slot-wrap">
+
 				<div class="slot-machine">
-					<div class="reel" id="reel1">🍒</div>
-					<div class="reel" id="reel2">🍋</div>
-					<div class="reel" id="reel3">💎</div>
+
+					<div
+						class="reel"
+						id="reel1"
+					>
+						🍒
+					</div>
+
+					<div
+						class="reel"
+						id="reel2"
+					>
+						💎
+					</div>
+
+					<div
+						class="reel"
+						id="reel3"
+					>
+						7️⃣
+					</div>
+
 				</div>
 
 				<div class="result-box">
-					<p id="slotMessage">Elegí una apuesta y girá.</p>
+
+					<p id="slotResult">
+						Seleccioná apuesta
+						y girá.
+					</p>
+
 				</div>
 
 				<div class="bet-row">
-					<button class="bet-btn active" data-bet="10">10</button>
-					<button class="bet-btn" data-bet="25">25</button>
-					<button class="bet-btn" data-bet="50">50</button>
-					<button class="bet-btn" data-bet="100">100</button>
+
+					<button
+						class="bet-btn active"
+						data-bet="10"
+					>
+						$10
+					</button>
+
+					<button
+						class="bet-btn"
+						data-bet="25"
+					>
+						$25
+					</button>
+
+					<button
+						class="bet-btn"
+						data-bet="50"
+					>
+						$50
+					</button>
+
+					<button
+						class="bet-btn"
+						data-bet="100"
+					>
+						$100
+					</button>
+
 				</div>
 
-				<button id="spinSlotBtn" class="primary-btn">Girar</button>
+				<button
+					id="spinBtn"
+					class="primary-btn"
+				>
+					Girar
+				</button>
 
 				<div class="panel">
+
 					<div class="panel-head">
-						<h3>Tabla de pagos</h3>
-						<span>Apuesta actual: <strong id="slotBetLabel">10</strong></span>
+
+						<h3>
+							Tabla de pagos
+						</h3>
+
+						<span>
+							Multiplicadores
+						</span>
+
 					</div>
 
 					<div class="payout-list">
-						<div class="payout-row"><span>2 iguales</span><strong>x2</strong></div>
-						<div class="payout-row"><span>3 🍒 / 🍋 / 🍀</span><strong>x10</strong></div>
-						<div class="payout-row"><span>3 🔔</span><strong>x12</strong></div>
-						<div class="payout-row"><span>3 ⭐</span><strong>x14</strong></div>
-						<div class="payout-row"><span>3 💎</span><strong>x18</strong></div>
-						<div class="payout-row"><span>3 7️⃣</span><strong>x30</strong></div>
+
+						<div class="payout-row">
+							<span>3 🍒</span>
+							<strong>x5</strong>
+						</div>
+
+						<div class="payout-row">
+							<span>3 🍋</span>
+							<strong>x8</strong>
+						</div>
+
+						<div class="payout-row">
+							<span>3 🔔</span>
+							<strong>x12</strong>
+						</div>
+
+						<div class="payout-row">
+							<span>3 💎</span>
+							<strong>x18</strong>
+						</div>
+
+						<div class="payout-row">
+							<span>3 ⭐</span>
+							<strong>x14</strong>
+						</div>
+
+						<div class="payout-row">
+							<span>3 7️⃣</span>
+							<strong>x30</strong>
+						</div>
+
 					</div>
+
 				</div>
+
 			</div>
+
 		</section>
 
-		<section id="jackpotView" class="view">
+		<!-- JACKPOT -->
+
+		<section
+			id="jackpotView"
+			class="view"
+		>
+
 			<div class="screen-header">
-				<button class="back-btn" data-back>←</button>
-				<div>
-					<p class="eyebrow">Juego</p>
-					<h2>Jackpot</h2>
+
+				<button
+					class="back-btn"
+					data-back
+				>
+					←
+				</button>
+
+				<h2>
+					Jackpot
+				</h2>
+
+				<div
+					class="balance-pill compact"
+				>
+
+					<span class="balance-label">
+						Saldo
+					</span>
+
+					<strong class="balanceMirror">
+						$1000
+					</strong>
+
 				</div>
-				<div class="balance-pill compact">
-					<strong id="jackpotCoins">1,000</strong>
-				</div>
+
 			</div>
 
 			<div class="jackpot-wrap">
+
 				<div class="jackpot-panel">
-					<p class="panel-title">9 espacios</p>
-					<strong class="panel-value">Costo: 50 monedas</strong>
-					<p class="panel-copy">Un espacio gana el premio grande. Los otros pueden dar premios chicos o nada.</p>
+
+					<span class="panel-title">
+						PREMIO ACTUAL
+					</span>
+
+					<strong
+						id="jackpotAmount"
+						class="panel-value"
+					>
+						$5000
+					</strong>
+
 				</div>
 
-				<div id="jackpotGrid" class="jackpot-grid"></div>
+				<div
+					id="jackpotGrid"
+					class="jackpot-grid"
+				></div>
 
-				<div class="result-box">
-					<p id="jackpotMessage">Tocá abrir jackpot.</p>
-				</div>
-
-				<button id="spinJackpotBtn" class="primary-btn">Abrir jackpot</button>
+				<button
+					id="jackpotBtn"
+					class="primary-btn alt"
+				>
+					Jugar Jackpot
+				</button>
 
 				<div class="panel">
+
 					<div class="panel-head">
-						<h3>Cómo se lee</h3>
-						<span>9 tiles</span>
+
+						<h3>
+							¿Cómo funciona?
+						</h3>
+
 					</div>
-					<p class="panel-copy">El grid se arma cada ronda y el premio ganador queda marcado al final.</p>
+
+					<p class="panel-copy">
+						Se selecciona un espacio
+						aleatorio. Si acertás,
+						ganás el premio completo.
+					</p>
+
 				</div>
+
 			</div>
+
 		</section>
 
-		<section id="blackjackView" class="view">
+		<!-- BLACKJACK -->
+
+		<section
+			id="blackjackView"
+			class="view"
+		>
+
 			<div class="screen-header">
-				<button class="back-btn" data-back>←</button>
-				<div>
-					<p class="eyebrow">Juego</p>
-					<h2>Blackjack</h2>
+
+				<button
+					class="back-btn"
+					data-back
+				>
+					←
+				</button>
+
+				<h2>
+					Blackjack
+				</h2>
+
+				<div
+					class="balance-pill compact"
+				>
+
+					<span class="balance-label">
+						Saldo
+					</span>
+
+					<strong class="balanceMirror">
+						$1000
+					</strong>
+
 				</div>
-				<div class="balance-pill compact">
-					<strong id="blackjackCoins">1,000</strong>
-				</div>
+
 			</div>
 
 			<div class="blackjack-wrap">
+
 				<div class="blackjack-table">
+
 					<div class="hand-block">
+
 						<div class="hand-topline">
-							<h3>Dealer</h3>
-							<strong id="dealerScore">0</strong>
+
+							<h3>
+								Dealer
+							</h3>
+
+							<strong
+								id="dealerScore"
+							>
+								0
+							</strong>
+
 						</div>
-						<div id="dealerHand" class="card-row"></div>
+
+						<div
+							id="dealerHand"
+							class="card-row"
+						></div>
+
 					</div>
 
 					<div class="table-divider"></div>
 
 					<div class="hand-block">
+
 						<div class="hand-topline">
-							<h3>Jugador</h3>
-							<strong id="playerScore">0</strong>
+
+							<h3>
+								Jugador
+							</h3>
+
+							<strong
+								id="playerScore"
+							>
+								0
+							</strong>
+
 						</div>
-						<div id="playerHand" class="card-row"></div>
+
+						<div
+							id="playerHand"
+							class="card-row"
+						></div>
+
 					</div>
+
 				</div>
 
 				<div class="result-box">
-					<p id="blackjackMessage">Elegí una apuesta y tocá “Nueva ronda”.</p>
-				</div>
 
-				<div class="bet-row">
-					<button class="bet-btn active" data-bet="10">10</button>
-					<button class="bet-btn" data-bet="25">25</button>
-					<button class="bet-btn" data-bet="50">50</button>
-					<button class="bet-btn" data-bet="100">100</button>
+					<p id="blackjackMessage">
+						Tocá nueva ronda.
+					</p>
+
 				</div>
 
 				<div
@@ -233,18 +563,13 @@
 
 				</div>
 
-				<div class="panel">
-					<div class="panel-head">
-						<h3>Apuesta actual</h3>
-						<span id="blackjackBetLabel">10</span>
-					</div>
-					<p class="panel-copy">As: 1 o 11. Cartas figura valen 10. Ganás si superás al dealer sin pasarte de 21.</p>
-				</div>
 			</div>
-		</section>
-	</main>
 
-	<script src="storage.js"></script>
+		</section>
+
+	</div>
+
 	<script src="app.js"></script>
+
 </body>
 </html>
