@@ -98,15 +98,7 @@ button{
 .app::before,
 .app::after{
 
-	content:"";
-
-	position:absolute;
-
-	pointer-events:none;
-
-	filter:blur(40px);
-
-	opacity:.35;
+	z-index:-1;
 }
 
 .app::before{
