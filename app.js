@@ -194,21 +194,41 @@ function showView(view) {
 	);
 }
 
-openSlotBtn.onclick = () =>
-	showView(slotView);
+openSlotBtn.addEventListener(
+	"click",
+	() => {
 
-openJackpotBtn.onclick = () =>
-	showView(jackpotView);
+		showView(slotView);
+	}
+);
 
-openBlackjackBtn.onclick = () =>
-	showView(blackjackView);
+openJackpotBtn.addEventListener(
+	"click",
+	() => {
+
+		showView(jackpotView);
+	}
+);
+
+openBlackjackBtn.addEventListener(
+	"click",
+	() => {
+
+		showView(blackjackView);
+	}
+);
 
 document
 	.querySelectorAll("[data-back]")
 	.forEach(btn => {
 
-		btn.onclick = () =>
-			showView(homeView);
+		btn.addEventListener(
+			"click",
+			() => {
+
+				showView(homeView);
+			}
+		);
 	});
 
 betButtons.forEach(btn => {
