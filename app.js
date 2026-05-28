@@ -1,390 +1,578 @@
-const state = getCasinoState();
+const homeView =
+	document.getElementById(
+		"homeView"
+	);
 
-const views = Array.from(document.querySelectorAll(".view"));
-const gameCards = Array.from(document.querySelectorAll(".game-card"));
-const backButtons = Array.from(document.querySelectorAll("[data-back]"));
-const betButtons = Array.from(document.querySelectorAll(".bet-btn"));
+const slotView =
+	document.getElementById(
+		"slotView"
+	);
 
-const homeCoins = document.getElementById("homeCoins");
-const slotCoins = document.getElementById("slotCoins");
-const jackpotCoins = document.getElementById("jackpotCoins");
-const blackjackCoins = document.getElementById("blackjackCoins");
+const jackpotView =
+	document.getElementById(
+		"jackpotView"
+	);
 
-const homeSelectedBet = document.getElementById("homeSelectedBet");
-const slotBetLabel = document.getElementById("slotBetLabel");
-const blackjackBetLabel = document.getElementById("blackjackBetLabel");
+const blackjackView =
+	document.getElementById(
+		"blackjackView"
+	);
 
-const reels = [
-	document.getElementById("reel1"),
-	document.getElementById("reel2"),
-	document.getElementById("reel3")
-];
+const openSlotBtn =
+	document.getElementById(
+		"openSlotBtn"
+	);
 
-const slotMessage = document.getElementById("slotMessage");
-const jackpotMessage = document.getElementById("jackpotMessage");
-const blackjackMessage = document.getElementById("blackjackMessage");
+const openJackpotBtn =
+	document.getElementById(
+		"openJackpotBtn"
+	);
 
-const spinSlotBtn = document.getElementById("spinSlotBtn");
-const spinJackpotBtn = document.getElementById("spinJackpotBtn");
-const bjNewRoundBtn = document.getElementById("bjNewRoundBtn");
-const bjHitBtn = document.getElementById("bjHitBtn");
-const bjStandBtn = document.getElementById("bjStandBtn");
+const openBlackjackBtn =
+	document.getElementById(
+		"openBlackjackBtn"
+	);
 
-const jackpotGrid = document.getElementById("jackpotGrid");
+const balanceText =
+	document.getElementById(
+		"balanceText"
+	);
 
-const dealerHandEl = document.getElementById("dealerHand");
-const playerHandEl = document.getElementById("playerHand");
-const dealerScoreEl = document.getElementById("dealerScore");
-const playerScoreEl = document.getElementById("playerScore");
+const balanceMirrors =
+	document.querySelectorAll(
+		".balanceMirror"
+	);
+
+const reel1 =
+	document.getElementById(
+		"reel1"
+	);
+
+const reel2 =
+	document.getElementById(
+		"reel2"
+	);
+
+const reel3 =
+	document.getElementById(
+		"reel3"
+	);
+
+const spinBtn =
+	document.getElementById(
+		"spinBtn"
+	);
+
+const slotResult =
+	document.getElementById(
+		"slotResult"
+	);
+
+const betButtons =
+	document.querySelectorAll(
+		".bet-btn"
+	);
+
+const jackpotGrid =
+	document.getElementById(
+		"jackpotGrid"
+	);
+
+const jackpotBtn =
+	document.getElementById(
+		"jackpotBtn"
+	);
+
+const jackpotAmount =
+	document.getElementById(
+		"jackpotAmount"
+	);
+
+const dealerHandEl =
+	document.getElementById(
+		"dealerHand"
+	);
+
+const playerHandEl =
+	document.getElementById(
+		"playerHand"
+	);
+
+const dealerScoreEl =
+	document.getElementById(
+		"dealerScore"
+	);
+
+const playerScoreEl =
+	document.getElementById(
+		"playerScore"
+	);
+
+const blackjackMessage =
+	document.getElementById(
+		"blackjackMessage"
+	);
+
+const bjNewRoundBtn =
+	document.getElementById(
+		"bjNewRoundBtn"
+	);
+
+const bjHitBtn =
+	document.getElementById(
+		"bjHitBtn"
+	);
+
+const bjStandBtn =
+	document.getElementById(
+		"bjStandBtn"
+	);
 
 const blackjackActions =
 	document.getElementById(
 		"blackjackActions"
 	);
 
-const symbols = ["🍒", "🍋", "🔔", "💎", "7️⃣", "🍀", "⭐"];
-const jackpotPool = [0, 0, 10, 10, 25, 25, 50, 100, 250, 500];
+const symbols = [
+	"🍒",
+	"🍋",
+	"🔔",
+	"⭐",
+	"💎",
+	"7️⃣"
+];
 
-const slotSymbolMeta = {
-	"🍒": { name: "Cereza", mult: 10 },
-	"🍋": { name: "Lima", mult: 10 },
-	"🔔": { name: "Campana", mult: 12 },
-	"💎": { name: "Diamante", mult: 18 },
-	"7️⃣": { name: "Siete", mult: 30 },
-	"🍀": { name: "Suerte", mult: 10 },
-	"⭐": { name: "Estrella", mult: 14 }
+const payouts = {
+	"🍒":5,
+	"🍋":8,
+	"🔔":12,
+	"⭐":14,
+	"💎":18,
+	"7️⃣":30
 };
 
-let selectedBet = state.selectedBet;
-let slotBusy = false;
-let jackpotBusy = false;
-let currentReels = state.currentReels;
-let jackpotBoard = createJackpotBoard();
+let balance = 1000;
+let currentBet = 10;
 
-let blackjack = createBlackjackState();
+let jackpotPrize = 5000;
 
-renderJackpotGrid();
-renderBlackjack();
-renderAll();
-syncBetUI();
-showView("homeView");
+const blackjack = {
+	player:[],
+	dealer:[],
+	inRound:false,
+	revealDealer:false,
+	message:"Tocá nueva ronda."
+};
 
-gameCards.forEach(card => {
-	card.addEventListener("click", () => showView(card.dataset.view));
-});
+function updateBalance() {
 
-backButtons.forEach(btn => {
-	btn.addEventListener("click", () => showView("homeView"));
-});
+	balanceText.textContent =
+		`$${balance}`;
 
-betButtons.forEach(button => {
-	button.addEventListener("click", () => {
-		selectedBet = Number(button.dataset.bet);
-		state.selectedBet = selectedBet;
-		saveCasinoState(state);
-		syncBetUI();
-		renderBalance();
-		renderBetLabels();
-	});
-});
+	balanceMirrors.forEach(
+		el => {
 
-spinSlotBtn.addEventListener("click", spinSlot);
-spinJackpotBtn.addEventListener("click", spinJackpot);
-bjNewRoundBtn.addEventListener("click", startBlackjackRound);
-bjHitBtn.addEventListener("click", blackjackHit);
-bjStandBtn.addEventListener("click", blackjackStand);
-
-function showView(viewId) {
-	views.forEach(view => view.classList.toggle("active", view.id === viewId));
-	All();
-}
-
-function All() {
-	Balance();
-	BetLabels();
-	SlotReels();
-	SlotMessage();
-	JackpotMessage();
-	JackpotGrid();
-	Blackjack();
-}
-
-function renderBalance() {
-	const coins = formatCoins(state.coins);
-	homeCoins.textContent = coins;
-	slotCoins.textContent = coins;
-	jackpotCoins.textContent = coins;
-	blackjackCoins.textContent = coins;
-}
-
-function renderBetLabels() {
-	homeSelectedBet.textContent = selectedBet;
-	slotBetLabel.textContent = selectedBet;
-	blackjackBetLabel.textContent = selectedBet;
-}
-
-function syncBetUI() {
-	betButtons.forEach(button => {
-		button.classList.toggle("active", Number(button.dataset.bet) === selectedBet);
-	});
-}
-
-function renderSlotReels() {
-	reels.forEach((reel, index) => {
-		reel.textContent = currentReels[index] || "❔";
-	});
-}
-
-function renderSlotMessage(text) {
-	if (typeof text === "string") {
-		slotMessage.textContent = text;
-		state.lastSlotMessage = text;
-		saveCasinoState(state);
-		return;
-	}
-	slotMessage.textContent = state.lastSlotMessage || "Elegí una apuesta y girá.";
-}
-
-function createJackpotBoard() {
-	const board = Array.from({ length: 9 }, () => ({
-		prize: pickJackpotPrize(),
-		revealed: false
-	}));
-
-	const bigIndex = Math.floor(Math.random() * board.length);
-	board[bigIndex].prize = 500;
-	return board;
-}
-
-function pickJackpotPrize() {
-	return jackpotPool[Math.floor(Math.random() * jackpotPool.length)];
-}
-
-function renderJackpotGrid() {
-	jackpotGrid.innerHTML = "";
-	jackpotBoard.forEach((tile, index) => {
-		const btn = document.createElement("button");
-		btn.className = "jackpot-tile";
-		btn.type = "button";
-		btn.dataset.index = String(index);
-		btn.innerHTML = `<div><strong>?</strong><span class="tiny">jackpot</span></div>`;
-		jackpotGrid.appendChild(btn);
-	});
-}
-
-function paintJackpotGrid(activeIndex = -1, reveal = false, winnerIndex = -1) {
-	const tiles = Array.from(document.querySelectorAll(".jackpot-tile"));
-	tiles.forEach((tile, index) => {
-		tile.classList.toggle("active", index === activeIndex);
-		tile.classList.toggle("win", index === winnerIndex);
-		const prize = jackpotBoard[index].prize;
-		if (reveal) {
-			tile.innerHTML = `<div><strong>${prize > 0 ? "+" + prize : "0"}</strong><span class="tiny">${index + 1}</span></div>`;
-		} else {
-			tile.innerHTML = `<div><strong>?</strong><span class="tiny">premio</span></div>`;
+			el.textContent =
+				`$${balance}`;
 		}
+	);
+}
+
+function showView(view) {
+
+	document
+		.querySelectorAll(".view")
+		.forEach(v => {
+
+			v.classList.remove(
+				"active"
+			);
+		});
+
+	view.classList.add(
+		"active"
+	);
+}
+
+openSlotBtn.onclick = () =>
+	showView(slotView);
+
+openJackpotBtn.onclick = () =>
+	showView(jackpotView);
+
+openBlackjackBtn.onclick = () =>
+	showView(blackjackView);
+
+document
+	.querySelectorAll("[data-back]")
+	.forEach(btn => {
+
+		btn.onclick = () =>
+			showView(homeView);
+	});
+
+betButtons.forEach(btn => {
+
+	btn.onclick = () => {
+
+		betButtons.forEach(
+			b =>
+				b.classList.remove(
+					"active"
+				)
+		);
+
+		btn.classList.add(
+			"active"
+		);
+
+		currentBet =
+			Number(
+				btn.dataset.bet
+			);
+	};
+});
+
+function randomSymbol() {
+
+	return symbols[
+		Math.floor(
+			Math.random() *
+			symbols.length
+		)
+	];
+}
+
+async function animateReel(
+	element,
+	duration = 700
+) {
+
+	return new Promise(resolve => {
+
+		const interval =
+			setInterval(() => {
+
+				element.textContent =
+					randomSymbol();
+
+			}, 80);
+
+		setTimeout(() => {
+
+			clearInterval(
+				interval
+			);
+
+			resolve();
+
+		}, duration);
 	});
 }
 
-function renderJackpotMessage(text) {
-	if (typeof text === "string") {
-		jackpotMessage.textContent = text;
-		state.lastJackpotMessage = text;
-		saveCasinoState(state);
+spinBtn.onclick = async () => {
+
+	if (
+		balance < currentBet
+	) {
+
+		slotResult.textContent =
+			"Saldo insuficiente.";
+
 		return;
 	}
-	jackpotMessage.textContent = state.lastJackpotMessage || "Tocá abrir jackpot.";
+
+	balance -= currentBet;
+
+	updateBalance();
+
+	spinBtn.disabled = true;
+
+	await Promise.all([
+		animateReel(reel1,700),
+		animateReel(reel2,900),
+		animateReel(reel3,1100)
+	]);
+
+	const s1 = randomSymbol();
+	const s2 = randomSymbol();
+	const s3 = randomSymbol();
+
+	reel1.textContent = s1;
+	reel2.textContent = s2;
+	reel3.textContent = s3;
+
+	if (
+		s1 === s2 &&
+		s2 === s3
+	) {
+
+		const multiplier =
+			payouts[s1];
+
+		const win =
+			currentBet *
+			multiplier;
+
+		balance += win;
+
+		slotResult.textContent =
+			`GANASTE $${win}`;
+
+	} else {
+
+		slotResult.textContent =
+			"Seguí intentando.";
+	}
+
+	updateBalance();
+
+	spinBtn.disabled = false;
+};
+
+function createJackpotGrid() {
+
+	jackpotGrid.innerHTML = "";
+
+	for (
+		let i = 0;
+		i < 9;
+		i++
+	) {
+
+		const tile =
+			document.createElement(
+				"div"
+			);
+
+		tile.className =
+			"jackpot-tile";
+
+		tile.innerHTML =
+			`
+			<div>
+				<strong>?</strong>
+				<span class="tiny">
+					jackpot
+				</span>
+			</div>
+			`;
+
+		jackpotGrid.appendChild(
+			tile
+		);
+	}
 }
 
-async function spinSlot() {
-	if (slotBusy) return;
-	if (state.coins < selectedBet) {
-		renderSlotMessage("No tenés monedas suficientes.");
+jackpotBtn.onclick = async () => {
+
+	if (balance < 100) {
 		return;
 	}
 
-	slotBusy = true;
-	spinSlotBtn.disabled = true;
-	state.coins -= selectedBet;
-	saveCasinoState(state);
-	renderBalance();
-	renderSlotMessage("Girá...");
-	const duration = 900;
-	const interval = 75;
-	const loops = Math.floor(duration / interval);
+	balance -= 100;
 
-	let lastFrame = ["", "", ""];
-	for (let i = 0; i < loops; i++) {
-		const frame = [
-			getDifferentSymbol(lastFrame[0]),
-			getDifferentSymbol(lastFrame[1]),
-			getDifferentSymbol(lastFrame[2])
+	updateBalance();
+
+	const tiles =
+		[
+			...document.querySelectorAll(
+				".jackpot-tile"
+			)
 		];
-		lastFrame = frame;
-		currentReels = frame;
-		renderSlotReels();
-		await wait(interval);
+
+	tiles.forEach(tile => {
+
+		tile.classList.remove(
+			"active",
+			"win"
+		);
+	});
+
+	let current = 0;
+
+	for (
+		let i = 0;
+		i < 18;
+		i++
+	) {
+
+		tiles.forEach(t =>
+			t.classList.remove(
+				"active"
+			)
+		);
+
+		tiles[current]
+			.classList.add(
+				"active"
+			);
+
+		current =
+			(current + 1) % 9;
+
+		await new Promise(r =>
+			setTimeout(r,90)
+		);
 	}
 
-	const final = [getRandomSymbol(), getRandomSymbol(), getRandomSymbol()];
-	currentReels = final;
-	state.currentReels = final;
+	const winner =
+		Math.floor(
+			Math.random() * 9
+		);
 
-	const { payout, message } = evaluateSlot(final, selectedBet);
-	state.coins += payout;
-	saveCasinoState(state);
+	tiles.forEach(t =>
+		t.classList.remove(
+			"active"
+		)
+	);
 
-	renderBalance();
-	renderSlotReels();
-	renderSlotMessage(message);
-	spinSlotBtn.disabled = false;
-	slotBusy = false;
-}
+	tiles[winner]
+		.classList.add(
+			"win"
+		);
 
-function evaluateSlot(result, bet) {
-	const [a, b, c] = result;
-	const sameThree = a === b && b === c;
-	const sameTwo = a === b || a === c || b === c;
+	if (winner === 4) {
 
-	if (sameThree) {
-		const mult = slotSymbolMeta[a]?.mult || 10;
-		const payout = bet * mult;
-		return { payout, message: `Triple ${a}. Ganaste ${formatCoins(payout)} monedas.` };
+		balance += jackpotPrize;
+
+		alert(
+			`JACKPOT! +$${jackpotPrize}`
+		);
+
+		jackpotPrize = 5000;
+
+	} else {
+
+		jackpotPrize += 250;
 	}
 
-	if (sameTwo) {
-		const payout = bet * 2;
-		return { payout, message: `Doble combinación. Ganaste ${formatCoins(payout)} monedas.` };
-	}
+	jackpotAmount.textContent =
+		`$${jackpotPrize}`;
 
-	return { payout: 0, message: "Sin combinación. Probá otra vez." };
-}
+	updateBalance();
+};
 
-function getRandomSymbol() {
-	return symbols[Math.floor(Math.random() * symbols.length)];
-}
+const suits = [
+	"♠",
+	"♥",
+	"♦",
+	"♣"
+];
 
-function getDifferentSymbol(last) {
-	if (symbols.length <= 1) return symbols[0];
-	let choice = getRandomSymbol();
-	let guard = 0;
-	while (choice === last && guard < 12) {
-		choice = getRandomSymbol();
-		guard++;
-	}
-	return choice;
-}
+const cards = [
+	"A","2","3","4",
+	"5","6","7","8",
+	"9","10","J","Q","K"
+];
 
-async function spinJackpot() {
-	if (jackpotBusy) return;
-	const cost = 50;
-	if (state.coins < cost) {
-		renderJackpotMessage("No tenés monedas suficientes.");
-		return;
-	}
+function drawCard() {
 
-	jackpotBusy = true;
-	spinJackpotBtn.disabled = true;
-	state.coins -= cost;
-	saveCasinoState(state);
-	renderBalance();
-	renderJackpotMessage("Abriendo jackpot...");
-
-	jackpotBoard = createJackpotBoard();
-	renderJackpotGrid();
-
-	const tiles = Array.from(document.querySelectorAll(".jackpot-tile"));
-	let active = 0;
-
-	for (let i = 0; i < 26; i++) {
-		paintJackpotGrid(active, false, -1);
-		active = (active + 1) % tiles.length;
-		await wait(i < 12 ? 55 : i < 20 ? 80 : 110);
-	}
-
-	const winnerIndex = Math.floor(Math.random() * jackpotBoard.length);
-	const prize = jackpotBoard[winnerIndex].prize;
-
-	paintJackpotGrid(-1, true, winnerIndex);
-
-	state.coins += prize;
-	saveCasinoState(state);
-	renderBalance();
-	renderJackpotMessage(prize > 0 ? `Ganaste ${formatCoins(prize)} monedas.` : "Esta vez no salió premio.");
-
-	spinJackpotBtn.disabled = false;
-	jackpotBusy = false;
-}
-
-function createBlackjackState() {
 	return {
-		deck: [],
-		player: [],
-		dealer: [],
-		inRound: false,
-		revealDealer: false,
-		message: state.lastBlackjackMessage || "Elegí una apuesta y tocá “Nueva ronda”."
+		rank:
+			cards[
+				Math.floor(
+					Math.random() *
+					cards.length
+				)
+			],
+
+		suit:
+			suits[
+				Math.floor(
+					Math.random() *
+					suits.length
+				)
+			]
 	};
 }
 
-function buildDeck() {
-	const suits = ["♠", "♥", "♦", "♣"];
-	const ranks = [
-		{ rank: "A", value: 11 },
-		{ rank: "2", value: 2 },
-		{ rank: "3", value: 3 },
-		{ rank: "4", value: 4 },
-		{ rank: "5", value: 5 },
-		{ rank: "6", value: 6 },
-		{ rank: "7", value: 7 },
-		{ rank: "8", value: 8 },
-		{ rank: "9", value: 9 },
-		{ rank: "10", value: 10 },
-		{ rank: "J", value: 10 },
-		{ rank: "Q", value: 10 },
-		{ rank: "K", value: 10 }
-	];
+function cardValue(rank) {
 
-	const deck = [];
-	suits.forEach(suit => {
-		ranks.forEach(card => {
-			deck.push({ ...card, suit });
-		});
-	});
-
-	for (let i = deck.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[deck[i], deck[j]] = [deck[j], deck[i]];
+	if (
+		["J","Q","K"]
+		.includes(rank)
+	) {
+		return 10;
 	}
 
-	return deck;
-}
+	if (rank === "A") {
+		return 11;
+	}
 
-function drawCard() {
-	return blackjack.deck.pop();
+	return Number(rank);
 }
 
 function scoreHand(hand) {
-	let total = hand.reduce((sum, card) => sum + card.value, 0);
-	let aces = hand.filter(card => card.rank === "A").length;
 
-	while (total > 21 && aces > 0) {
+	let total = 0;
+	let aces = 0;
+
+	hand.forEach(card => {
+
+		total +=
+			cardValue(
+				card.rank
+			);
+
+		if (
+			card.rank === "A"
+		) {
+			aces++;
+		}
+	});
+
+	while (
+		total > 21 &&
+		aces > 0
+	) {
+
 		total -= 10;
 		aces--;
 	}
+
 	return total;
 }
 
-function renderCard(card, hidden = false) {
-	const el = document.createElement("div");
-	el.className = "bj-card" + (hidden ? " back" : "");
+function renderCard(
+	card,
+	hidden = false
+) {
+
+	const div =
+		document.createElement(
+			"div"
+		);
+
 	if (hidden) {
-		el.textContent = "★";
-		return el;
+
+		div.className =
+			"bj-card back";
+
+		div.textContent = "🂠";
+
+		return div;
 	}
-	el.classList.toggle("red", card.suit === "♥" || card.suit === "♦");
-	el.innerHTML = `<span class="rank">${card.rank}</span><span class="suit">${card.suit}</span>`;
-	return el;
+
+	const red =
+		card.suit === "♥" ||
+		card.suit === "♦";
+
+	div.className =
+		`bj-card ${red ? "red" : ""}`;
+
+	div.innerHTML =
+		`
+		<div class="rank">
+			${card.rank}
+		</div>
+
+		<div class="suit">
+			${card.suit}
+		</div>
+		`;
+
+	return div;
 }
 
 function renderBlackjack() {
@@ -432,19 +620,15 @@ function renderBlackjack() {
 	dealerScoreEl.textContent =
 		blackjack.revealDealer
 			? dealerScore
-			: (
-				blackjack.dealer.length
-				? scoreHand([
-					blackjack.dealer[0]
-				])
-				: 0
-			);
+			: scoreHand([
+				blackjack.dealer[0]
+			]);
 
 	playerScoreEl.textContent =
 		playerScore;
 
 	blackjack.dealer.forEach(
-		(card, index) => {
+		(card,index) => {
 
 			const hidden =
 				blackjack.inRound &&
@@ -464,10 +648,7 @@ function renderBlackjack() {
 		card => {
 
 			playerHandEl.appendChild(
-				renderCard(
-					card,
-					false
-				)
+				renderCard(card)
 			);
 		}
 	);
@@ -509,112 +690,150 @@ function renderBlackjack() {
 	}
 }
 
-function startBlackjackRound() {
-	const bet = selectedBet;
-	if (state.coins < bet) {
-		blackjack.message = "No tenés monedas suficientes.";
-		renderBlackjack();
+function endRound(message) {
+
+	blackjack.inRound = false;
+
+	blackjack.revealDealer = true;
+
+	blackjack.message = message;
+
+	renderBlackjack();
+}
+
+bjNewRoundBtn.onclick = () => {
+
+	if (balance < 50) {
 		return;
 	}
 
-	state.coins -= bet;
-	saveCasinoState(state);
-	renderBalance();
+	balance -= 50;
 
-	blackjack.deck = buildDeck();
-	blackjack.player = [drawCard(), drawCard()];
-	blackjack.dealer = [drawCard(), drawCard()];
+	updateBalance();
+
+	blackjack.player = [
+		drawCard(),
+		drawCard()
+	];
+
+	blackjack.dealer = [
+		drawCard(),
+		drawCard()
+	];
+
 	blackjack.inRound = true;
-	blackjack.revealDealer = false;
-	blackjack.message = `Ronda en curso. Apuesta: ${formatCoins(bet)}.`;
 
-	saveCasinoState(state);
+	blackjack.revealDealer = false;
+
+	blackjack.message =
+		"Tu turno.";
+
 	renderBlackjack();
 
-	const playerScore = scoreHand(blackjack.player);
-	if (playerScore === 21) {
-		finishBlackjack(true, true);
+	const player =
+		scoreHand(
+			blackjack.player
+		);
+
+	if (player === 21) {
+
+		balance += 125;
+
+		updateBalance();
+
+		endRound(
+			"BLACKJACK!"
+		);
 	}
-}
+};
 
-function blackjackHit() {
-	if (!blackjack.inRound) return;
+bjHitBtn.onclick = () => {
 
-	blackjack.player.push(drawCard());
-	const score = scoreHand(blackjack.player);
+	if (
+		!blackjack.inRound
+	) {
+		return;
+	}
+
+	blackjack.player.push(
+		drawCard()
+	);
+
+	renderBlackjack();
+
+	const score =
+		scoreHand(
+			blackjack.player
+		);
 
 	if (score > 21) {
-		blackjack.revealDealer = true;
-		blackjack.inRound = false;
-		blackjack.message = "Te pasaste de 21. Perdiste.";
-		state.lastBlackjackMessage = blackjack.message;
-		saveCasinoState(state);
-		renderBlackjack();
-		return;
+
+		endRound(
+			"Te pasaste."
+		);
 	}
+};
 
-	blackjack.message = `Tu mano: ${score}. Podés pedir o plantarte.`;
-	state.lastBlackjackMessage = blackjack.message;
-	saveCasinoState(state);
-	renderBlackjack();
-}
-
-function blackjackStand() {
-	if (!blackjack.inRound) return;
+bjStandBtn.onclick = () => {
 
 	blackjack.revealDealer = true;
 
-	let dealerScore = scoreHand(blackjack.dealer);
-	const playerScore = scoreHand(blackjack.player);
+	while (
+		scoreHand(
+			blackjack.dealer
+		) < 17
+	) {
 
-	while (dealerScore < 17) {
-		blackjack.dealer.push(drawCard());
-		dealerScore = scoreHand(blackjack.dealer);
+		blackjack.dealer.push(
+			drawCard()
+		);
 	}
 
-	if (dealerScore > 21 || playerScore > dealerScore) {
-		finishBlackjack(true, false);
-		return;
-	}
+	const dealer =
+		scoreHand(
+			blackjack.dealer
+		);
 
-	if (dealerScore === playerScore) {
-		finishBlackjack(false, false, true);
-		return;
-	}
+	const player =
+		scoreHand(
+			blackjack.player
+		);
 
-	finishBlackjack(false, false);
-}
+	if (
+		dealer > 21 ||
+		player > dealer
+	) {
 
-function finishBlackjack(playerWon, natural = false, push = false) {
-	const bet = selectedBet;
-	blackjack.inRound = false;
-	blackjack.revealDealer = true;
+		balance += 100;
 
-	if (push) {
-		state.coins += bet;
-		blackjack.message = "Empate. Se devolvió la apuesta.";
-	} else if (playerWon && natural) {
-		const payout = Math.floor(bet * 2.5);
-		state.coins += payout;
-		blackjack.message = `Blackjack natural. Ganaste ${formatCoins(payout)} monedas.`;
-	} else if (playerWon) {
-		const payout = bet * 2;
-		state.coins += payout;
-		blackjack.message = `Ganaste ${formatCoins(payout)} monedas.`;
+		updateBalance();
+
+		endRound(
+			"Ganaste."
+		);
+
+	} else if (
+		player === dealer
+	) {
+
+		balance += 50;
+
+		updateBalance();
+
+		endRound(
+			"Empate."
+		);
+
 	} else {
-		blackjack.message = "Perdiste la ronda.";
+
+		endRound(
+			"Perdiste."
+		);
 	}
+};
 
-	state.lastBlackjackMessage = blackjack.message;
-	saveCasinoState(state);
-	renderBalance();
-	renderBlackjack();
-}
+createJackpotGrid();
 
-function formatCoins(value) {
-	return new Intl.NumberFormat("es-AR").format(value);
-}
+renderBlackjack();
 
-function wait(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
-}
+updateBalance();
