@@ -37,6 +37,11 @@ const playerHandEl = document.getElementById("playerHand");
 const dealerScoreEl = document.getElementById("dealerScore");
 const playerScoreEl = document.getElementById("playerScore");
 
+const blackjackActions =
+	document.getElementById(
+		"blackjackActions"
+	);
+
 const symbols = ["🍒", "🍋", "🔔", "💎", "7️⃣", "🍀", "⭐"];
 const jackpotPool = [0, 0, 10, 10, 25, 25, 50, 100, 250, 500];
 
@@ -91,17 +96,17 @@ bjStandBtn.addEventListener("click", blackjackStand);
 
 function showView(viewId) {
 	views.forEach(view => view.classList.toggle("active", view.id === viewId));
-	renderAll();
+	All();
 }
 
-function renderAll() {
-	renderBalance();
-	renderBetLabels();
-	renderSlotReels();
-	renderSlotMessage();
-	renderJackpotMessage();
-	renderJackpotGrid();
-	renderBlackjack();
+function All() {
+	Balance();
+	BetLabels();
+	SlotReels();
+	SlotMessage();
+	JackpotMessage();
+	JackpotGrid();
+	Blackjack();
 }
 
 function renderBalance() {
@@ -162,7 +167,7 @@ function renderJackpotGrid() {
 		btn.className = "jackpot-tile";
 		btn.type = "button";
 		btn.dataset.index = String(index);
-		btn.innerHTML = `<div><strong>?</strong><span class="tiny">espacio ${index + 1}</span></div>`;
+		btn.innerHTML = `<div><strong>?</strong><span class="tiny">jackpot</span></div>`;
 		jackpotGrid.appendChild(btn);
 	});
 }
@@ -176,7 +181,7 @@ function paintJackpotGrid(activeIndex = -1, reveal = false, winnerIndex = -1) {
 		if (reveal) {
 			tile.innerHTML = `<div><strong>${prize > 0 ? "+" + prize : "0"}</strong><span class="tiny">${index + 1}</span></div>`;
 		} else {
-			tile.innerHTML = `<div><strong>?</strong><span class="tiny">${index + 1}</span></div>`;
+			tile.innerHTML = `<div><strong>?</strong><span class="tiny">premio</span></div>`;
 		}
 	});
 }
@@ -383,33 +388,125 @@ function renderCard(card, hidden = false) {
 }
 
 function renderBlackjack() {
+
 	dealerHandEl.innerHTML = "";
 	playerHandEl.innerHTML = "";
 
-	if (!blackjack.player.length && !blackjack.dealer.length) {
+	if (
+		!blackjack.player.length &&
+		!blackjack.dealer.length
+	) {
+
 		dealerScoreEl.textContent = "0";
 		playerScoreEl.textContent = "0";
-		blackjackMessage.textContent = blackjack.message;
-		bjHitBtn.disabled = true;
-		bjStandBtn.disabled = true;
+
+		blackjackMessage.textContent =
+			blackjack.message;
+
+		bjNewRoundBtn.style.display =
+			"block";
+
+		bjHitBtn.style.display =
+			"none";
+
+		bjStandBtn.style.display =
+			"none";
+
+		blackjackActions.classList.add(
+			"single"
+		);
+
 		return;
 	}
 
-	const dealerScore = scoreHand(blackjack.dealer);
-	const playerScore = scoreHand(blackjack.player);
+	const dealerScore =
+		scoreHand(
+			blackjack.dealer
+		);
 
-	dealerScoreEl.textContent = blackjack.revealDealer ? dealerScore : (blackjack.dealer.length ? scoreHand([blackjack.dealer[0]]) : 0);
-	playerScoreEl.textContent = playerScore;
+	const playerScore =
+		scoreHand(
+			blackjack.player
+		);
 
-	blackjack.dealer.forEach((card, index) => {
-		const hidden = blackjack.inRound && !blackjack.revealDealer && index === 1;
-		dealerHandEl.appendChild(renderCard(card, hidden));
-	});
-	blackjack.player.forEach(card => playerHandEl.appendChild(renderCard(card, false)));
+	dealerScoreEl.textContent =
+		blackjack.revealDealer
+			? dealerScore
+			: (
+				blackjack.dealer.length
+				? scoreHand([
+					blackjack.dealer[0]
+				])
+				: 0
+			);
 
-	blackjackMessage.textContent = blackjack.message;
-	bjHitBtn.disabled = !blackjack.inRound;
-	bjStandBtn.disabled = !blackjack.inRound;
+	playerScoreEl.textContent =
+		playerScore;
+
+	blackjack.dealer.forEach(
+		(card, index) => {
+
+			const hidden =
+				blackjack.inRound &&
+				!blackjack.revealDealer &&
+				index === 1;
+
+			dealerHandEl.appendChild(
+				renderCard(
+					card,
+					hidden
+				)
+			);
+		}
+	);
+
+	blackjack.player.forEach(
+		card => {
+
+			playerHandEl.appendChild(
+				renderCard(
+					card,
+					false
+				)
+			);
+		}
+	);
+
+	blackjackMessage.textContent =
+		blackjack.message;
+
+	if (
+		blackjack.inRound
+	) {
+
+		bjNewRoundBtn.style.display =
+			"none";
+
+		bjHitBtn.style.display =
+			"block";
+
+		bjStandBtn.style.display =
+			"block";
+
+		blackjackActions.classList.remove(
+			"single"
+		);
+
+	} else {
+
+		bjNewRoundBtn.style.display =
+			"block";
+
+		bjHitBtn.style.display =
+			"none";
+
+		bjStandBtn.style.display =
+			"none";
+
+		blackjackActions.classList.add(
+			"single"
+		);
+	}
 }
 
 function startBlackjackRound() {
